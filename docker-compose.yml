@@ -1,0 +1,11 @@
+services:
+  backend:
+    build: .
+    volumes:
+      - .:/usr/backend
+      - /backend/data
+    ports:
+      - 5000:5000
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
