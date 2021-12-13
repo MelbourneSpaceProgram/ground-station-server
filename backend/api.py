@@ -1,14 +1,15 @@
 from flask_restful import Api, Resource, reqparse
 
-from backend.database import get_db
+from backend.database import get_sats_db, get_passes_db
+from backend.tracker import compute_next_pass
 
 api = Api()
 
 
 class Satellites(Resource):
     def get(self):
-        db = get_db()
-        sats = [db[id] for id in list(db.keys())]
+        sats_db = get_sats_db()
+        sats = [sats_db[id] for id in list(sats_db.keys())]
         return sats, 200
 
     def post(self):
@@ -21,15 +22,20 @@ class Satellites(Resource):
 
         args = parser.parse_args()
 
-        db = get_db()
-        db[args['id']] = args
+        sats_db = get_sats_db()
+        sats_db[args['id']] = args
 
-        return args, 201
+        next_pass = compute_next_pass(args['id'])
+
+        passes_db = get_passes_db()
+        passes_db[args['id']] = next_pass
+
+        return sats_db[args['id']], 201
 
 
 class Satellite(Resource):
     def get(self, sat_id):
-        db = get_db()
+        db = get_sats_db()
 
         if sat_id not in db.keys():
             return {"error": "Satellite not found"}, 404
@@ -37,14 +43,30 @@ class Satellite(Resource):
         return db[sat_id], 200
 
     def delete(self, sat_id):
-        db = get_db()
+        sats_db = get_sats_db()
+        passes_db = get_passes_db()
+
+        if sat_id not in sats_db.keys():
+            return {"error": "Satellite not found"}, 404
+
+        del sats_db[sat_id]
+
+        if sat_id in passes_db.keys():
+            del passes_db[sat_id]
+
+        return {}, 204
+
+
+class Passes(Resource):
+    def get(self, sat_id):
+        db = get_passes_db()
 
         if sat_id not in db.keys():
             return {"error": "Satellite not found"}, 404
 
-        del db[sat_id]
-        return {}, 204
+        return db[sat_id], 200
 
 
 api.add_resource(Satellites, "/satellites")
 api.add_resource(Satellite, "/satellites/<sat_id>")
+api.add_resource(Passes, "/satellites/<sat_id>/passes")

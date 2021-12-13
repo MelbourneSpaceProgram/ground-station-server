@@ -11,10 +11,12 @@ from flask import Flask
 def create_app(config=None):
     """Perform set up for the backend."""
     app = Flask(__name__,
+                instance_path="/app/data",
                 instance_relative_config=True)
 
-    app.config['DATABASE'] = os.path.join(app.instance_path,
-                                          'ground-station.db')
+    app.config['SATS_DB'] = os.path.join(app.instance_path, 'sats.db')
+    app.config['PASSES_DB'] = os.path.join(app.instance_path, 'passes.db')
+    app.config['TIMEZONE'] = "Australia/Melbourne"
 
     if config is None:
         app.config.from_pyfile('config.py', silent=True)
@@ -29,7 +31,7 @@ def create_app(config=None):
 
     @app.route("/")
     def index():
-        return "<h1>Hello there!</h1>"
+        return "<h1>Hello world!</h1>"
 
     from . import database
     database.init_app(app)

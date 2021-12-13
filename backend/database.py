@@ -3,32 +3,35 @@ import shelve
 from flask import current_app, g
 
 
-def get_db():
+def get_sats_db():
     """Open a connection to the database.
 
     Checks whether a connection already exists for the current request and
     reuses it if possible.
     """
-    if 'db' not in g:
-        g.db = shelve.open(current_app.config['DATABASE'])
+    if 'sats' not in g:
+        g.sats = shelve.open(current_app.config['SATS_DB'])
 
-    return g.db
+    return g.sats
+
+
+def get_passes_db():
+    if 'passes' not in g:
+        g.passes = shelve.open(current_app.config['PASSES_DB'])
+
+    return g.passes
 
 
 def close_db(err=None):
     """Clean up the connection to the database."""
-    db = g.pop('db', None)
+    sats = g.pop('sats', None)
+    passes = g.pop('sats', None)
 
-    if db is not None:
-        db.close()
+    if sats is not None:
+        sats.close()
 
-
-def init_db():
-    """Initialise the database from the schema."""
-    db = get_db()
-
-    with current_app.open_resource('schema.sql') as f:
-        db.executescript(f.read().decode('utf-8'))
+    if passes is not None:
+        passes.close()
 
 
 def init_app(app):
