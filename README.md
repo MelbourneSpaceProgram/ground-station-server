@@ -61,7 +61,7 @@ If a satellite with the given `id` already exists, the existing data will be ove
 
 **Definition**
 
-`GET /satellite/<id>`
+`GET /satellites/<id>`
 
 **Response**
 
@@ -80,7 +80,7 @@ If a satellite with the given `id` already exists, the existing data will be ove
 
 **Definition**
 
-`DELETE /satellite/<id>`
+`DELETE /satellites/<id>`
 
 **Response**
 

@@ -2,7 +2,6 @@ FROM python:3
 
 WORKDIR /usr/backend
 
-ENV FLASK_APP=main.py
 ENV FLASK_ENV=development
 
 COPY requirements.txt ./
