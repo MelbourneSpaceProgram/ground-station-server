@@ -4,6 +4,7 @@ services:
     container_name: backend
     volumes:
       - ./backend:/app/backend
+      - /app/data
     ports:
       - 5000:5000
     environment:

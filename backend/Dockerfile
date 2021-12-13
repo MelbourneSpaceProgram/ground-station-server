@@ -1,18 +1,9 @@
-FROM python:3.8-slim
+FROM python:3
 
 WORKDIR /app/backend
 
-COPY Pipfile Pipfile.lock ./
-
-# RUN pip install pipenv && \
-#     apt-get update && \
-#     apt-get install -y --no-install-recommends gcc python3-dev libssl-dev && \
-#     pipenv install --deploy --system && \
-#     apt-get remove -y gcc python3-dev libssl-dev && \
-#     apt-get autoremove -y && \
-#     pip uninstall pipenv -y
-
-RUN pip install pipenv && pipenv install --deploy --system
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
