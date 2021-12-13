@@ -1,105 +1,41 @@
-# Ground station backend
+# Ground station server
 
-The backend for the ACRUX-2 ground station. It maintains a list of tracked satellites and computes the time of their passes.
+The web interface for the ACRUX-2 ground station.
+
+- `frontend`: Dashboard built with Dash/Plotly
+- `backend`: REST API built on Flask
+
+## Prerequisites
+
+The easiest way to get started is with Docker.
+
+- For most devices, see https://docs.docker.com/get-docker/
+- For Raspberry Pi, see https://docs.docker.com/engine/install/debian/
+
+Tests are written using `pytest` which can be installed using
+
+```sh
+pip install pytest
+```
 
 ## Building and running
 
-## API
+Once you have Docker installed, running the project involves
 
-### List all satellites
-
-**Definition**
-
-`GET /satellites`
-
-**Response**
-
-- `200 OK` on success
-
-```json
-[
-  {
-    "id": "43013",
-    "name": "NOAA-20",
-    "pipeline": "NOAA"
-  },
-  {
-    "id": "33591",
-    "name": "NOAA-19",
-    "pipeline": "NOAA"
-  }
-]
+```sh
+git clone https://github.com/MelbourneSpaceProgram/ground-station-server
+cd ground-station-server
+docker compose up
 ```
 
-### Adding a new satellite
+Sometimes you will need to rebuild the image to ensure the latest changes are included
 
-**Definition**
-
-`POST /satellites`
-
-**Arguments**
-
-- `"id":string` the NORAD ID for this satellite
-- `"name":string` the name of the satellite
-- `"pipeline":string` the decoding pipeline relevant for the satellite
-
-If a satellite with the given `id` already exists, the existing data will be overwritten.
-
-**Response**
-
-- `201 Created` on success
-
-```json
-{
-  "id": "43013",
-  "name": "NOAA-20",
-  "pipeline": "NOAA"
-}
+```sh
+docker compose up --build
 ```
 
-### Lookup satellite details
+Stopping the project
 
-**Definition**
-
-`GET /satellites/<id>`
-
-**Response**
-
-- `404 Not Found` if the satellite does not exist
-- `200 OK` on success
-
-```json
-{
-  "id": "43013",
-  "name": "NOAA-20",
-  "pipeline": "NOAA"
-}
-```
-
-### Delete satellite
-
-**Definition**
-
-`DELETE /satellites/<id>`
-
-**Response**
-
-- `404 Not Found` if the satellite does not exist
-- `204 No Content` on success
-
-### Lookup next pass
-
-**Definition**
-
-`GET /satellites/<id>/passes`
-
-**Response**
-
-- `404 Not Found` if the satellite does not exist
-- `200 OK` on success
-
-```json
-{
-  "date": "2021-12-09T17:11:30.321Z"
-}
+```sh
+docker compose down
 ```
