@@ -1,3 +1,0 @@
-flask==2.0.2
-skyfield==1.40
-pytz==2021.3

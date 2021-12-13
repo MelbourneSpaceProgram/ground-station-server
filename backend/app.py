@@ -1,25 +1,37 @@
+"""Backend for the ground station.
+
+Manages satellites, computes passes and stores observations.
+"""
+
+import os
+
 from flask import Flask
-from tracker.sat_tracker import SatelliteTracker
 
 
 def create_app(config=None):
-    app = Flask(__name__)
+    """Perform set up for the backend."""
+    app = Flask(__name__,
+                instance_relative_config=True)
+
+    app.config['DATABASE'] = os.path.join(app.instance_path,
+                                          'ground-station.db')
+
     if config is None:
-        # app.config.from_pyfile()
+        app.config.from_pyfile('config.py', silent=True)
         pass
     else:
         app.config.from_mapping(config)
 
+    try:
+        os.makedirs(app.instance_path)
+    except OSError:
+        pass
+
     @app.route("/")
-    @app.route("/index")
     def index():
-        sat_tracker = SatelliteTracker()
+        return "<h1>Hello there!</h1>"
 
-        sat_tracker.add_satellite(43013)
-        AOS, LOS = sat_tracker.passes[43013]
-        print(AOS)
-        print(LOS)
-
-        return "<h1>Next Pass</h1><p>" + str(AOS) + "</p><p>" + str(LOS) + "</p>"
+    from . import database
+    database.init_app(app)
 
     return app

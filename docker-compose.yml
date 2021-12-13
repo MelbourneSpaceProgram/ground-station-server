@@ -1,9 +1,9 @@
 services:
   backend:
     build: backend
+    container_name: backend
     volumes:
-      - ./backend:/usr/backend
-      - /app/data
+      - ./backend:/app/backend
     ports:
       - 5000:5000
     environment:
