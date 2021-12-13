@@ -1,4 +1,4 @@
-import dbm
+import shelve
 
 from flask import current_app, g
 
@@ -10,7 +10,7 @@ def get_db():
     reuses it if possible.
     """
     if 'db' not in g:
-        g.db = dbm.open(current_app.config['DATABASE'], 'c')
+        g.db = shelve.open(current_app.config['DATABASE'])
 
     return g.db
 

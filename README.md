@@ -87,19 +87,11 @@ If a satellite with the given `id` already exists, the existing data will be ove
 - `404 Not Found` if the satellite does not exist
 - `204 No Content` on success
 
-```json
-{
-  "id": "43013",
-  "name": "NOAA-20",
-  "pipeline": "NOAA"
-}
-```
-
 ### Lookup next pass
 
 **Definition**
 
-`GET /passes/<id>`
+`GET /satellites/<id>/passes`
 
 **Response**
 
