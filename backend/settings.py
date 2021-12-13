@@ -17,7 +17,7 @@ def get_root_dir() -> Path:
 
 def get_data_dir() -> Path:
     """Return the path of the data volume."""
-    return Path("/backend/data")
+    return Path("/app/data")
 
 
 def get_tle_dir() -> Path:

@@ -1,9 +1,9 @@
 services:
   backend:
-    build: .
+    build: backend
     volumes:
-      - .:/usr/backend
-      - /backend/data
+      - ./backend:/usr/backend
+      - /app/data
     ports:
       - 5000:5000
     environment:
