@@ -1,6 +1,6 @@
 FROM python:3
 
-WORKDIR /app/backend
+WORKDIR /app/frontend
 
 COPY requirements.txt ./
 RUN pip install --upgrade pip && \
@@ -8,6 +8,4 @@ RUN pip install --upgrade pip && \
 
 COPY . .
 
-ENV FLASK_ENV=development
-
-ENTRYPOINT ["flask", "run", "--host", "0.0.0.0"]
+CMD ["python", "app.py"]
