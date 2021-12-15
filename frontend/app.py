@@ -3,13 +3,24 @@ import pandas as pd
 import requests
 from dash import dash_table, dcc, html
 from dash.dependencies import Input, Output, State
+import plotly.graph_objects as go
 
 app = dash.Dash(__name__)
+
+map_fig = go.Figure(go.Scattergeo())
+map_fig.update_geos(projection_type="natural earth")
+map_fig.update_layout(height=300, margin={'t': 0, 'b': 0, 'l': 0, 'r': 0})
+
+map_fig.add_trace(go.Scattergeo(lat=[-37.814], lon=[144.963], mode="markers", hoverinfo='text', text=["Ground station"]))
+
+map_graph = dcc.Graph(id='world-map', figure=map_fig)
 
 app.layout = html.Div(children=[
     html.H1(children='ACRUX-2 Ground Station'),
 
     html.Button('Refresh', id='refresh', n_clicks=0),
+
+    map_graph,
 
     html.H2(children='Satellites'),
 
@@ -97,4 +108,3 @@ def delete_satellite(sat_id):
 
 if __name__ == '__main__':
     app.run_server(host="0.0.0.0", port=8050, debug=True)
-    update_satellites()
