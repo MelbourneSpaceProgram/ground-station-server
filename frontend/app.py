@@ -83,10 +83,11 @@ def edit_satellites(add_btn, del_btn, add_val, name, pipeline, del_val):
     ctx = dash.callback_context
 
     if ctx.triggered:
+        print(ctx.triggered)
         if ctx.triggered[0]['prop_id'].split('.')[0] == "add":
             add_satellite(add_val, name, pipeline)
         else:
-            delete_satellite(add_val)
+            delete_satellite(del_val)
 
     return add_btn + del_btn
 
