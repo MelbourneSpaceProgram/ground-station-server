@@ -8,6 +8,4 @@ RUN pip install --upgrade pip && \
 
 COPY . .
 
-ENV FLASK_ENV=development
-
-ENTRYPOINT ["flask", "run", "--host", "0.0.0.0"]
+ENTRYPOINT ["flask", "run"]
