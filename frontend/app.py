@@ -4,14 +4,15 @@ import requests
 from dash import dash_table, dcc, html
 from dash.dependencies import Input, Output, State
 import plotly.graph_objects as go
+import plotly.express as px
 
-BACKEND = "http://host.docker.internal/8888"
+BACKEND = "http://host.docker.internal:8888"
 
-app = dash.Dash(__name__)
+app = dash.Dash(__name__, update_title=None)
 
 map_fig = go.Figure(go.Scattergeo())
 map_fig.update_geos(projection_type="natural earth")
-map_fig.update_layout(height=300, margin={"t": 0, "b": 0, "l": 0, "r": 0})
+map_fig.update_layout(height=300, margin={"t": 0, "b": 0, "l": 0, "r": 0}, uirevision='yes')
 
 map_fig.add_trace(
     go.Scattergeo(
@@ -23,13 +24,19 @@ map_fig.add_trace(
     )
 )
 
-map_graph = dcc.Graph(id="world-map", figure=map_fig)
+map_fig.add_trace(
+    go.Scattergeo(
+        lat=[0],
+        lon=[0],
+        mode="lines+markers",
+    )
+)
 
 app.layout = html.Div(
     children=[
         html.H1(children="ACRUX-2 Ground Station"),
         html.Button("Refresh", id="refresh", n_clicks=0),
-        map_graph,
+        dcc.Graph(id="world-map", figure=map_fig),
         html.H2(children="Satellites"),
         html.Div(
             id="sat-form",
@@ -46,9 +53,17 @@ app.layout = html.Div(
             ],
         ),
         dash_table.DataTable(id="table"),
+        dcc.Interval(id='interval', interval=500, n_intervals=0),
     ]
 )
 
+latlon_cache = {}
+
+@app.callback(Output('world-map', 'extendData'), Input('interval', 'n_intervals'))
+def satellite_pos(n):
+    if bool(latlon_cache):
+        data = latlon_cache['43013']
+        dict(x=[data[1][1], data[1][1000]], y=[data[2][1], data[2][2000]]), [1]
 
 @app.callback(
     Output("table", "data"), Output("table", "columns"), Input("refresh", "n_clicks")
@@ -59,6 +74,11 @@ def update_satellites(n_clicks):
 
     data = df.to_dict(orient="records")
     columns = [{"name": col, "id": col} for col in df.columns]
+
+    for sat in data:
+        sat_id = sat['id']
+        # save latlon
+        latlon_cache[sat_id] = pd.DataFrame(requests.get(BACKEND + "/satellites/" + sat_id + "/latlon").json())
 
     return data, columns
 
@@ -96,7 +116,7 @@ def add_satellite(sat_id, name, pipeline):
     if sat_id is not None:
         requests.post(
             BACKEND + "/satellites",
-            data={"id": sat_id, "name": name, "pipeline": pipeline},
+            data={"id": sat_id, "name": name, "pipeline": "NOAA"},
         )
 
 

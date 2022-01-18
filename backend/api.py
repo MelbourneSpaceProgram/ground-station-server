@@ -1,7 +1,7 @@
 from flask_restful import Api, Resource, reqparse
 
 from backend.database import get_sats_db, get_passes_db
-from backend.tracker import compute_next_pass
+from backend.tracker import compute_next_pass, compute_latlon
 
 api = Api()
 
@@ -67,6 +67,18 @@ class Passes(Resource):
         return db[sat_id], 200
 
 
+class LatLon(Resource):
+    def get(self, sat_id):
+        db = get_sats_db()
+
+        if sat_id not in db.keys():
+            return {"error": "Satellite not found"}, 404
+
+        data = compute_latlon(sat_id)
+        return data, 200
+
+
 api.add_resource(Satellites, "/satellites")
 api.add_resource(Satellite, "/satellites/<sat_id>")
 api.add_resource(Passes, "/satellites/<sat_id>/passes")
+api.add_resource(LatLon, "/satellites/<sat_id>/latlon")
